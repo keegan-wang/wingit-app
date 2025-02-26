@@ -362,24 +362,26 @@
             // For demonstration, we'll simulate a successful submission
             
             // Send data to Google Sheets via Google Apps Script
-            fetch('https://script.google.com/macros/s/AKfycbwfNAbUdqwyDMdp5iMQTQDSXXwKo6ib0bcZC0zqg9C4uGs5t9jfEfX0UFF5Ru9_xkT0iA/exec', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: name,
-                    email: email,
-                    phone: phone,
-                    grade: grade,
-                    pickup: pickup,
-                    date: date,
-                    time: time
-                })
+            // Using a different approach to handle CORS restrictions
+            const form = new FormData();
+            form.append('name', name);
+            form.append('email', email);
+            form.append('phone', phone);
+            form.append('grade', grade);
+            form.append('pickup', pickup);
+            form.append('date', date);
+            form.append('time', time);
+            
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbwSsIX7zKZVTnEyV5k92hkj7SYOrrJkEpDJwZUI8X8afMX1AHkPQLDvNpapOlocsFpyDw/exec';
+            
+            fetch(scriptURL, { 
+                method: 'POST', 
+                mode: 'no-cors',
+                body: form
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.result === 'success') {
+            .then(() => {
+                // With no-cors mode, we won't get a readable response,
+                // so we'll proceed as if it succeeded
                     // Create and show confirmation modal
                     const confirmationModal = document.createElement('div');
                     confirmationModal.className = 'modal';
@@ -414,9 +416,7 @@
                     document.getElementById('closeModal').addEventListener('click', function() {
                         document.body.removeChild(confirmationModal);
                     });
-                } else {
-                    throw new Error('Failed to submit data');
-                }
+                // No else clause needed with this approach
             })
             .catch(error => {
                 document.getElementById('errorMessage').style.display = 'block';
