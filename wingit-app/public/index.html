@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wingit - Group Rideshare for College Students</title>
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-dark: #4338CA;
+            --secondary: #6D28D9;
+            --background: #F9FAFB;
+            --text: #111827;
+            --text-light: #6B7280;
+            --white: #FFFFFF;
+            --error: #EF4444;
+            --success: #10B981;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.5;
+        }
+        
+        header {
+            background-color: var(--white);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo svg {
+            width: 1.75rem;
+            height: 1.75rem;
+        }
+        
+        main {
+            min-height: calc(100vh - 10rem);
+            padding: 3rem 0;
+        }
+        
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+        
+        .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            max-width: 36rem;
+            margin: 0 auto 2rem;
+        }
+        
+        .form-container {
+            background-color: var(--white);
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            max-width: 32rem;
+            margin: 0 auto;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            transition: border-color 0.15s ease-in-out;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: var(--white);
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.15s ease-in-out;
+            width: 100%;
+        }
+        
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .success-message {
+            display: none;
+            background-color: var(--success);
+            color: white;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        
+        .error-message {
+            display: none;
+            background-color: var(--error);
+            color: white;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        
+        footer {
+            background-color: var(--white);
+            padding: 2rem 0;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+        
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .modal-content {
+            background-color: var(--white);
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            background-color: var(--primary);
+            color: var(--white);
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .modal-body ul {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            background-color: var(--background);
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .modal-footer button {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-weight: 600;
+            width: auto;
+        }
+        
+        .modal-footer button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        @media (max-width: 640px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.125rem;
+            }
+            
+            .form-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 11c0 0.7-0.5 1.4-1.8 2.3-1.2 0.8-3 1.7-5.2 1.7-2.2 0-4-0.9-5.2-1.7C4.5 12.4 4 11.7 4 11M18 11V3H6v8M18 11v2M6 11v2"></path>
+                        <path d="M18 8h4"></path>
+                        <path d="M2 8h4"></path>
+                        <rect x="6" y="15" width="12" height="8" rx="1"></rect>
+                    </svg>
+                    Wingit
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <div class="hero">
+                <h1>Share Rides, Save Money</h1>
+                <p class="subtitle">Join other college students for group rides to the airport and split the cost. Sign up for a ride or create your own!</p>
+            </div>
+            
+            <div class="form-container">
+                <h2>Sign Up for a Ride</h2>
+                <form id="rideshareForm">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">CMU Email</label>
+                        <input type="email" id="email" name="email" pattern=".*@andrew\.cmu\.edu$" placeholder="youremail@andrew.cmu.edu" required>
+                        <small style="color: var(--text-light);">Please use your CMU email (@andrew.cmu.edu)</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder="123-456-7890" required>
+                        <small style="color: var(--text-light);">Format: 123-456-7890</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="grade">Year</label>
+                        <select id="grade" name="grade" required>
+                            <option value="" disabled selected>Select your year</option>
+                            <option value="Freshman">Freshman</option>
+                            <option value="Sophomore">Sophomore</option>
+                            <option value="Junior">Junior</option>
+                            <option value="Senior">Senior</option>
+                            <option value="Graduate">Graduate</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="pickup">Pickup Location</label>
+                        <select id="pickup" name="pickup" required>
+                            <option value="" disabled selected>Select pickup location</option>
+                            <option value="Tepper Bus Stop">Tepper Bus Stop</option>
+                            <option value="UC Bus Stop">UC Bus Stop</option>
+                            <option value="Scotty's Market">Scotty's Market</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="date">Date of Departure</label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="time">Time of Departure</label>
+                        <input type="time" id="time" name="time" required>
+                    </div>
+                    
+                    <button type="submit">Submit</button>
+                </form>
+                
+                <div id="successMessage" class="success-message">
+                    Thank you for signing up! We'll connect you with other students traveling at similar times.
+                </div>
+                
+                <div id="errorMessage" class="error-message">
+                    There was an error submitting your information. Please try again.
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Wingit. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+        document.getElementById('rideshareForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const grade = document.getElementById('grade').value;
+            const pickup = document.getElementById('pickup').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            
+            // Create data object to send to the server
+            const formData = {
+                name: name,
+                email: email,
+                phone: phone,
+                grade: grade,
+                pickup: pickup,
+                date: date,
+                time: time
+            };
+            
+            // Send data to the backend API
+            fetch('/api/submissions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Show success message
+                document.getElementById('successMessage').style.display = 'block';
+                document.getElementById('errorMessage').style.display = 'none';
+                
+                // Create and show confirmation modal
+                const confirmationModal = document.createElement('div');
+                confirmationModal.className = 'modal';
+                confirmationModal.innerHTML = `
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Submission Successful!</h3>
+                        </div>
+                        <div class="modal-body">
+                            <p>Thank you for signing up with Wingit!</p>
+                            <p>We've received your information and will connect you with others traveling at similar times.</p>
+                            <p><strong>Details:</strong></p>
+                            <ul>
+                                <li><strong>Name:</strong> ${name}</li>
+                                <li><strong>Pickup:</strong> ${pickup}</li>
+                                <li><strong>Date:</strong> ${new Date(date).toLocaleDateString()}</li>
+                                <li><strong>Time:</strong> ${time}</li>
+                            </ul>
+                            <p>A confirmation has been sent to ${email}.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="closeModal" class="button">Close</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(confirmationModal);
+                
+                // Reset the form
+                document.getElementById('rideshareForm').reset();
+                
+                // Add event listener to close button
+                document.getElementById('closeModal').addEventListener('click', function() {
+                    document.body.removeChild(confirmationModal);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('successMessage').style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wingit Admin Dashboard</title>
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-dark: #4338CA;
+            --secondary: #6D28D9;
+            --background: #F9FAFB;
+            --text: #111827;
+            --text-light: #6B7280;
+            --white: #FFFFFF;
+            --error: #EF4444;
+            --border: #E5E7EB;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-content {
+            padding: 1.5rem;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: 0.375rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--white);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--background);
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        tr:hover {
+            background-color: #f1f5f9;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loginScreen">
+        <div class="login-container">
+            <h2 style="text-align: center;">Wingit Admin Login</h2>
+            <div id="loginError" class="error-message hidden">Invalid username or password</div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="dashboardScreen" class="hidden">
+        <div class="dashboard">
+            <div class="sidebar">
+                <div class="sidebar-content">
+                    <a href="#" class="nav-link active">Dashboard</a>
+                    <a href="#" id="logoutButton" class="nav-link">Logout</a>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="header">
+                    <h1>Dashboard</h1>
+                    <span id="currentDate"></span>
+                </div>
+
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Submissions</div>
+                        <div class="stat-value" id="totalSubmissions">0</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header"><h2>All Submissions</h2></div>
+                    <div class="card-body">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Pickup Location</th>
+                                </tr>
+                            </thead>
+                            <tbody id="submissionsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const loginScreen = document.getElementById("loginScreen");
+            const dashboardScreen = document.getElementById("dashboardScreen");
+            const loginForm = document.getElementById("loginForm");
+            const loginError = document.getElementById("loginError");
+            const logoutButton = document.getElementById("logoutButton");
+            const totalSubmissions = document.getElementById("totalSubmissions");
+            const submissionsTableBody = document.getElementById("submissionsTableBody");
+            const API_URL = window.location.origin;
+
+            async function initDashboard() {
+                try {
+                    const response = await fetch(`${API_URL}/api/submissions`);
+                    if (!response.ok) throw new Error("Failed to fetch submissions");
+
+                    const submissions = await response.json();
+                    totalSubmissions.textContent = submissions.length;
+
+                    renderSubmissionsTable(submissions);
+                } catch (error) {
+                    console.error("Error loading submissions:", error);
+                }
+            }
+
+            function renderSubmissionsTable(submissions) {
+                submissionsTableBody.innerHTML = submissions
+                    .map(
+                        (submission) => `
+                        <tr>
+                            <td>${submission.name}</td>
+                            <td>${submission.email}</td>
+                            <td>${formatDate(submission.date)}</td>
+                            <td>${formatTime(submission.time)}</td>
+                            <td>${submission.pickup}</td>
+                        </tr>`
+                    )
+                    .join("");
+            }
+
+            function formatDate(dateString) {
+                try {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+                } catch {
+                    return dateString;
+                }
+            }
+
+            function formatTime(timeString) {
+                if (!timeString) return "";
+                try {
+                    const [hours, minutes] = timeString.split(":");
+                    const hour = parseInt(hours);
+                    const ampm = hour >= 12 ? "PM" : "AM";
+                    const hour12 = hour % 12 || 12;
+                    return `${hour12}:${minutes} ${ampm}`;
+                } catch {
+                    return timeString;
+                }
+            }
+
+            loginForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                loginError.classList.add("hidden");
+
+                const username = document.getElementById("username").value;
+                const password = document.getElementById("password").value;
+
+                try {
+                    const response = await fetch(`${API_URL}/api/login`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ username, password }),
+                    });
+
+                    if (!response.ok) throw new Error("Login failed");
+
+                    sessionStorage.setItem("user", "logged_in");
+                    loginScreen.classList.add("hidden");
+                    dashboardScreen.classList.remove("hidden");
+                    initDashboard();
+                } catch (error) {
+                    loginError.textContent = error.message;
+                    loginError.classList.remove("hidden");
+                }
+            });
+
+            logoutButton.addEventListener("click", () => {
+                sessionStorage.removeItem("user");
+                dashboardScreen.classList.add("hidden");
+                loginScreen.classList.remove("hidden");
+            });
+
+            if (sessionStorage.getItem("user")) {
+                loginScreen.classList.add("hidden");
+                dashboardScreen.classList.remove("hidden");
+                initDashboard();
+            }
+        });
+    </script>
+
+</body>
+</html>
