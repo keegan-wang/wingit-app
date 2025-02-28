@@ -7,13 +7,23 @@
     "start": "node server.js",
     "dev": "node server.js"
   },
-  "keywords": ["rideshare", "college"],
+  "engines": {
+    "node": "18.x"
+  },
+  "keywords": [
+    "rideshare",
+    "college"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^4.17.1",
+    "google-auth-library": "^9.15.1",
+    "googleapis": "^144.0.0",
+    "pg": "^8.13.3",
     "sqlite3": "^5.0.2"
   }
-} 
+}
